@@ -1,12 +1,10 @@
 package interview;
 
-import java.util.Objects;
-
 /**
  * @author sunyajun
  * @date 2020/3/3 4:42 PM
  */
-public class ZooPos {
+public class AnimalPos {
 
     private String name;
 
@@ -42,10 +40,10 @@ public class ZooPos {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ZooPos zooPos = (ZooPos) o;
+        AnimalPos animalPos = (AnimalPos) o;
 
-        if (!x.equals(zooPos.x)) return false;
-        return y.equals(zooPos.y);
+        if (!x.equals(animalPos.x)) return false;
+        return y.equals(animalPos.y);
     }
 
     @Override

@@ -2,7 +2,10 @@ package interview;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * @author sunyajun
@@ -33,6 +36,10 @@ public class GetSnapshot {
     }
 
     /**
+     * 思路：题目要求根据id获取那一刻所有的动物的位置，本程序只存储那一刻动物的位置(用map<animalName, Pos>)，通过遍历输入的数据，
+     * 每读取到一个新的时间，就将该时间出现的所有的动物的位置更新；如果是第一次添加直接加入；否则更新新位置(新位置=旧位置+位置偏移量)；
+     * 最终找到id后，遍历输出map即可(因为用的TreeMap，是有序的)
+     *
      * @param historyData
      * @param id
      * @return
@@ -49,16 +56,16 @@ public class GetSnapshot {
 
         int step = 1;   // 用来记录当前处理到哪一步了 1: 时间id 2: 时间行 3: 处理位置数据
         Boolean ifFindTime = false; // 最终是否找到了id
-        Map<String, ZooPos> snapshotPosMap = new TreeMap<>(); // 用来存放那一刻的快照 key为name, value为位置
+        Map<String, AnimalPos> snapshotPosMap = new TreeMap<>(); // 用来存放那一刻的快照 key为name, value为位置
 
         ifFindTime = searchSnapShotById(id, sbResult, rows, step, ifFindTime, snapshotPosMap);
 
         // 是否找到了结果
         if (ifFindTime) {
             // 输出结果
-            Set<Map.Entry<String, ZooPos>> entries = snapshotPosMap.entrySet();
+            Set<Map.Entry<String, AnimalPos>> entries = snapshotPosMap.entrySet();
             if (entries.size() > 0) {
-                for (Map.Entry<String, ZooPos> entry : entries) {
+                for (Map.Entry<String, AnimalPos> entry : entries) {
                     sbResult.append(entry.getKey() + " " + entry.getValue().getX() + " " + entry.getValue().getY() + "\n");
                 }
             }
@@ -67,7 +74,7 @@ public class GetSnapshot {
         return sbResult.toString();
     }
 
-    private Boolean searchSnapShotById(String id, StringBuilder sbResult, String[] rows, int step, Boolean ifFindTime, Map<String, ZooPos> snapshotPosMap) {
+    private Boolean searchSnapShotById(String id, StringBuilder sbResult, String[] rows, int step, Boolean ifFindTime, Map<String, AnimalPos> snapshotPosMap) {
         // 遍历处理每一行
         for (int i = 0; i < rows.length; i++) {
             String row = rows[i];
@@ -119,8 +126,8 @@ public class GetSnapshot {
                 }
 
                 String name = words[0];
-                ZooPos zooPos = new ZooPos();
-                zooPos.setName(name);
+                AnimalPos animalPos = new AnimalPos();
+                animalPos.setName(name);
 
                 // 获取位置行
                 if (snapshotPosMap.containsKey(name)) { //
@@ -130,16 +137,16 @@ public class GetSnapshot {
                         break;
                     }
                     // 判断当前位置是否合法
-                    ZooPos preZooPos = snapshotPosMap.get(name);
-                    if (ifPosConflict(words, preZooPos)) {
+                    AnimalPos preAnimalPos = snapshotPosMap.get(name);
+                    if (ifPosConflict(words, preAnimalPos)) {
                         sbResult.append("Conflict found at ").append(id);
                         break;
                     }
 
                     // 更新新的位置
-                    zooPos.setX(Integer.parseInt(words[1]) + Integer.parseInt(words[3]));
-                    zooPos.setY(Integer.parseInt(words[2]) + Integer.parseInt(words[4]));
-                    snapshotPosMap.put(name, zooPos);
+                    animalPos.setX(Integer.parseInt(words[1]) + Integer.parseInt(words[3]));
+                    animalPos.setY(Integer.parseInt(words[2]) + Integer.parseInt(words[4]));
+                    snapshotPosMap.put(name, animalPos);
                     continue;
                 } else {
                     // 第一次进来，必须是3
@@ -147,9 +154,9 @@ public class GetSnapshot {
                         sbResult.append("Invalid format.");
                         break;
                     }
-                    zooPos.setX(Integer.parseInt(words[1]));
-                    zooPos.setY(Integer.parseInt(words[2]));
-                    snapshotPosMap.put(name, zooPos);
+                    animalPos.setX(Integer.parseInt(words[1]));
+                    animalPos.setY(Integer.parseInt(words[2]));
+                    snapshotPosMap.put(name, animalPos);
                     continue;
                 }
             }
@@ -168,8 +175,8 @@ public class GetSnapshot {
         return ifFindTime;
     }
 
-    private boolean ifPosConflict(String[] words, ZooPos preZooPos) {
-        return preZooPos.getX() != Integer.parseInt(words[1]) || preZooPos.getY() != Integer.parseInt(words[2]);
+    private boolean ifPosConflict(String[] words, AnimalPos preAnimalPos) {
+        return preAnimalPos.getX() != Integer.parseInt(words[1]) || preAnimalPos.getY() != Integer.parseInt(words[2]);
     }
 
     private boolean ifEmpty(String row) {
