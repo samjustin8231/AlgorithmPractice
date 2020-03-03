@@ -2,6 +2,7 @@
 # 运行方式1：直接运行main方法方式
 
 1. main方法用了一个例子中的数据，
+2. 直接在Idea中右键GetSnapshot类的main方法运行即可
 
 ```
 historyData如下：
@@ -23,6 +24,7 @@ cat2 2 3
 # 运行方式2：运行单元测试
 1. 如果运行单元测试，需要引入JUnit4的jar包；
 2. 单元测试谢了三个case
+3. 直接在GetSnapshotTest上右键run GetSnapshotTest
 
 case1：运行正确的case，数据用的跟mian形式运行的数据一样； 
 
